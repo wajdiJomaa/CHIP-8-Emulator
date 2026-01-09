@@ -1,6 +1,6 @@
 import sdl2.ext as se
 import sdl2 as s
-
+import pygame.mixer
 class Display:
     def __init__(self):
         self.scale = 10
@@ -14,9 +14,31 @@ class Display:
         self.window = se.Window("CHIP-8", size=(self.width, self.height))
         self.surface = s.SDL_GetWindowSurface(self.window.window)
         self.pixels = se.pixels2d(self.surface.contents)
-        self.clear()
+
+        pygame.mixer.init()
+        self.beep_sound = pygame.mixer.Sound("beep.wav")
+        self.beep_channel = None
+
         self.window.show()
-    
+        self.KEYMAP = {
+            s.SDLK_1: 0x1,
+            s.SDLK_2: 0x2,
+            s.SDLK_3: 0x3,
+            s.SDLK_4: 0xC,
+            s.SDLK_q: 0x4,
+            s.SDLK_w: 0x5,
+            s.SDLK_e: 0x6,
+            s.SDLK_r: 0xD,
+            s.SDLK_a: 0x7,
+            s.SDLK_s: 0x8,
+            s.SDLK_d: 0x9,
+            s.SDLK_f: 0xE,
+            s.SDLK_z: 0xA,
+            s.SDLK_x: 0x0,
+            s.SDLK_c: 0xB,
+            s.SDLK_v: 0xF,
+        }
+        
     def flip_pixel(self, x, y):
         turned_off = False
         # print(x,y)
@@ -43,3 +65,12 @@ class Display:
     
     def destroy(self):
         se.quit()
+        
+    def play_sound(self):
+        if self.beep_channel is None or not self.beep_channel.get_busy():
+            self.beep_channel = self.beep_sound.play(loops=-1)
+
+    def get_key(self, k):
+        if k not in self.KEYMAP:
+            return None
+        return self.KEYMAP[k]   
