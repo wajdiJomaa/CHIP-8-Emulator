@@ -68,7 +68,7 @@ class Display:
         
     def play_sound(self):
         if self.beep_channel is None or not self.beep_channel.get_busy():
-            self.beep_channel = self.beep_sound.play(loops=-1)
+            self.beep_channel = self.beep_sound.play()
 
     def get_key(self, k):
         if k not in self.KEYMAP:
